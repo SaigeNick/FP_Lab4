@@ -2,12 +2,18 @@
 
 ;; Функція знаходження мінімального елемента з параметром key та test
 (defun find-min-with-key (lst key test)
-  "Знаходить мінімальний елемент у списку lst з урахуванням key та test."
-  (reduce (lambda (x y)
-            (if (funcall test (funcall key x) (funcall key y))
-                x
-                y))
-          lst))
+  "Знаходить мінімальний елемент у списку `lst` з урахуванням `key` та `test`,
+   викликаючи `key` для кожного елемента лише один раз."
+  (when lst
+    (let* ((keyed-lst (mapcar (lambda (x)
+                                (cons (funcall key x) x))
+                              lst))
+           (min-pair (reduce (lambda (pair1 pair2)
+                               (if (funcall test (car pair1) (car pair2))
+                                   pair1
+                                   pair2))
+                             keyed-lst)))
+      (cdr min-pair))))  ; повертаємо оригінальний елемент
 
 ;; Функція сортування вибором з ключовими параметрами
 (defun selection-sort (lst &key (key #'identity) (test #'<))
